@@ -26,6 +26,7 @@ var (
 	debug   = kingpin.Flag("debug", "Enable debug mode.").Bool()
 	regions = kingpin.Flag("region", "AWS Region to query. Repeat for multiple regions.").Short('r').Default(DEFAULT_REGIONS...).Strings()
 	retries = kingpin.Flag("retries", "Number of times to retry AWS API calls in case of errors.").Default("10").Int()
+	jsonOut = kingpin.Flag("json", "Output json.").Bool()
 )
 
 func init() {
@@ -103,7 +104,11 @@ func main() {
 	// Sort and print instances that were returned to us
 	if len(insts) > 0 {
 		insts.sort()
-		insts.printTable()
+		if *jsonOut {
+			insts.printJson()
+		} else {
+			insts.printTable()
+		}
 	}
 
 	if *debug {

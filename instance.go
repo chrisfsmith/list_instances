@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"net"
 	"os"
 	"sort"
@@ -52,6 +54,23 @@ func (s instances) printTable() {
 		table.Append(i.toRow())
 	}
 	table.Render()
+}
+
+func (s instances) printJson() {
+	rows := make([]map[string]string, len(s))
+
+	for i := 0; i < len(s); i++ {
+		rows[i] = map[string]string{
+			"name":      s[i].name,
+			"id":        *s[i].InstanceId,
+			"publicIp":  stringify(s[i].PublicIpAddress),
+			"privateIp": *s[i].PrivateIpAddress,
+			"key":       stringify(s[i].KeyName),
+		}
+	}
+
+	bytes, _ := json.MarshalIndent(rows, "", "  ")
+	fmt.Print(string(bytes))
 }
 
 func (s instances) sort() {
